@@ -1,0 +1,208 @@
+package email;
+
+import java.util.ArrayList;
+import java.util.Properties;
+
+import javax.mail.Address;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Store;
+
+public class ReadingNaverEmail {
+	private String userId;
+	private String userPw;
+	
+	public ReadingNaverEmail(){
+		this.userId = "";
+		this.userPw = "";
+	}
+	
+	public ReadingNaverEmail(String userId, String userPw){
+		this.userId = userId;
+		this.userPw = userPw;
+	}
+	
+	public boolean checkIdPw(){
+		boolean res = true;
+    	
+        Properties props = new Properties();
+		props.setProperty("mail.store.protocol", "imaps");
+		// set this session up to use SSL for IMAP connections
+		// props.setProperty("mail.imap.socketFactory.class",
+		// "javax.net.ssl.SSLSocketFactory");
+		// don't fallback to normal IMAP connections on failure.
+		// props.setProperty("mail.imap.socketFactory.fallback", "false");
+		// use the simap port for imap/ssl connections.
+		// props.setProperty("mail.imap.socketFactory.port", "993");
+        
+        try {
+            Session session = Session.getInstance(props, null);
+            Store store = session.getStore();
+            try{
+            	store.connect("imap.naver.com", this.userId, this.userPw);
+            }
+            catch(Exception e){
+            	res = false;
+            	return res;
+            }
+        } catch (Exception mex) {
+            mex.printStackTrace();
+        }
+        
+        return res;
+	}
+	
+	public int getNewMailCount(){
+		int newMailCnt = -1;
+    	
+        Properties props = new Properties();
+		props.setProperty("mail.store.protocol", "imaps");
+		// set this session up to use SSL for IMAP connections
+		// props.setProperty("mail.imap.socketFactory.class",
+		// "javax.net.ssl.SSLSocketFactory");
+		// don't fallback to normal IMAP connections on failure.
+		// props.setProperty("mail.imap.socketFactory.fallback", "false");
+		// use the simap port for imap/ssl connections.
+		// props.setProperty("mail.imap.socketFactory.port", "993");
+        
+        try {
+            Session session = Session.getInstance(props, null);
+            Store store = session.getStore();
+            try{
+            	store.connect("imap.naver.com", this.userId, this.userPw);
+            }
+            catch(Exception e){
+            	System.out.println("아이디 / 비밀번호 틀림");
+            	return -1;
+            }
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+            
+            newMailCnt = inbox.getUnreadMessageCount();
+            
+            //System.out.println(this.userId + " : " + newMailCnt);
+        } catch (Exception mex) {
+            mex.printStackTrace();
+        }
+        
+        return newMailCnt;
+	}
+	
+    public ArrayList<Email> readMail(){
+    	ArrayList<Email> emailList = new ArrayList<Email>();
+    	
+        Properties props = new Properties();
+		props.setProperty("mail.store.protocol", "imaps");
+		// set this session up to use SSL for IMAP connections
+		// props.setProperty("mail.imap.socketFactory.class",
+		// "javax.net.ssl.SSLSocketFactory");
+		// don't fallback to normal IMAP connections on failure.
+		// props.setProperty("mail.imap.socketFactory.fallback", "false");
+		// use the simap port for imap/ssl connections.
+		// props.setProperty("mail.imap.socketFactory.port", "993");
+        
+        try {
+            Session session = Session.getInstance(props, null);
+            Store store = session.getStore();
+            try{
+            	store.connect("imap.naver.com", this.userId, this.userPw);
+            }
+            catch(Exception e){
+            	System.out.println("아이디 / 비밀번호 틀림");
+            	return null;
+            }
+          
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+            
+            int msgCnt = inbox.getMessageCount();
+            
+            for(int p=msgCnt; p>msgCnt-10; p--){
+            	Message msg = inbox.getMessage(p);
+                Address[] in = msg.getFrom();
+                
+                String realAddress = "";
+                
+                for (Address address : in) {
+                	int idx = 0;
+                	for(int i=0; i<address.toString().length(); i++){
+                		if( address.toString().charAt(i) == '<' ){
+                			idx = i;
+                		}
+                	}
+                	
+                	realAddress = address.toString().substring(idx+1, address.toString().length()-1);
+                    //System.out.println("FROM :" + address.toString());
+                	//System.out.println("FROM : " + realAddress);
+                }
+                
+                //System.out.println("SENT DATE : " + msg.getSentDate());
+                //System.out.println("SUBJECT : " + msg.getSubject());
+                
+                
+                int idx = 0;
+                
+                for(int i=0; i<msg.getFlags().toString().length(); i++){
+                	if( msg.getFlags().toString().charAt(i) == '@' ){
+                		idx = i+1;
+                		break;
+                	}
+                }
+                
+                String flag = msg.getFlags().toString().substring(idx, msg.getFlags().toString().length());
+                
+                if( flag.equals("0") ){
+                	//System.out.println("안 읽음");
+                	emailList.add(new Email(realAddress, msg.getSentDate().toString(), msg.getSubject(), false));
+                }
+                else{
+                	//System.out.println("읽음");
+                	emailList.add(new Email(realAddress, msg.getSentDate().toString(), msg.getSubject(), true));
+                }
+                
+                //System.out.println(msg.getFlags().toString().substring(idx, msg.getFlags().toString().length()));
+                //////// 확인한 메일 : flag ----20
+                //////// 확인 안 한 메일 : flag ----0
+                
+                
+                //emailList.add(new Email(realAddress, msg.getSentDate().toString(), msg.getSubject()));
+                
+                //msg.setHeader("Content-Type", "multipart/related");
+                
+                /*if( msg.getContent() instanceof Multipart ){
+                	Multipart mp = (Multipart) msg.getContent();
+                    BodyPart bp = mp.getBodyPart(0);
+                }
+                else{
+                	System.out.println("SENT DATE:" + msg.getSentDate());
+                	System.out.println("SUBJECT:" + msg.getSubject());
+                }*/
+                
+                //System.out.println("CONTENT:" + bp.getContent());
+            }
+        } catch (Exception mex) {
+            mex.printStackTrace();
+        }
+        
+        return emailList;
+    }
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getUserPw() {
+		return userPw;
+	}
+
+	public void setUserPw(String userPw) {
+		this.userPw = userPw;
+	}
+    
+    
+}

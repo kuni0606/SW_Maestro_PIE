@@ -1,0 +1,21 @@
+import java.util.ArrayList;
+
+import email.Email;
+import email.ReadingNaverEmail;
+
+public class TestClass {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ReadingNaverEmail rem = new ReadingNaverEmail("maniadb", "3879Eodqh");
+		//"kuni0606", "tony06" -  еб╠у naver
+		//ReadingGoogleEmail rem = new ReadingGoogleEmail("maniaddb@gmail.com", "eodqh3879");
+		
+		ArrayList<Email> emailList = rem.readMail();
+		
+		for(Email temp : emailList){
+			System.out.println(temp);
+		}
+	}
+
+}

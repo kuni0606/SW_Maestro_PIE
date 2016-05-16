@@ -1,0 +1,149 @@
+package email;
+
+import java.util.ArrayList;
+import java.util.Properties;
+
+import javax.mail.Address;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Store;
+
+public class ReadingGoogleEmail {
+	private String userId;
+	private String userPw;
+	
+	public ReadingGoogleEmail(){
+		this.userId = "";
+		this.userPw = "";
+	}
+	
+	public ReadingGoogleEmail(String userId, String userPw){
+		this.userId = userId;
+		this.userPw = userPw;
+	}
+	
+	public int getNewMailCount(){
+    	int newMailCnt = -1;
+    	
+        Properties props = new Properties();
+        props.setProperty("mail.store.protocol", "imaps");
+        try {
+            Session session = Session.getInstance(props, null);
+            Store store = session.getStore();
+            store.connect("imap.gmail.com", this.userId, this.userPw);
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+            
+            newMailCnt = inbox.getNewMessageCount();
+        } catch (Exception mex) {
+            mex.printStackTrace();
+        }
+        
+        return newMailCnt;
+	}
+	
+    public ArrayList<Email> readMail(){
+    	ArrayList<Email> emailList = new ArrayList<Email>();
+    	
+        Properties props = new Properties();
+        props.setProperty("mail.store.protocol", "imaps");
+        try {
+            Session session = Session.getInstance(props, null);
+            Store store = session.getStore();
+            store.connect("imap.gmail.com", this.userId, this.userPw);
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+            
+            int msgCnt = inbox.getMessageCount();
+            
+            for(int p=msgCnt; p>msgCnt-10; p--){
+            	if( p <= 0 ){
+            		break;
+            	}
+            	Message msg = inbox.getMessage(p);
+                Address[] in = msg.getFrom();
+                
+                String realAddress = "";
+                
+                for (Address address : in) {
+                	int idx = 0;
+                	for(int i=0; i<address.toString().length(); i++){
+                		if( address.toString().charAt(i) == '<' ){
+                			idx = i;
+                		}
+                	}
+                	
+                	realAddress = address.toString().substring(idx+1, address.toString().length()-1);
+                    //System.out.println("FROM :" + address.toString());
+                	//System.out.println("FROM : " + realAddress);
+                }
+                
+                //System.out.println("SENT DATE : " + msg.getSentDate());
+                //System.out.println("SUBJECT : " + msg.getSubject());
+                
+                int idx = 0;
+                
+                for(int i=0; i<msg.getFlags().toString().length(); i++){
+                	if( msg.getFlags().toString().charAt(i) == '@' ){
+                		idx = i+1;
+                		break;
+                	}
+                }
+                
+                String flag = msg.getFlags().toString().substring(idx, msg.getFlags().toString().length());
+                
+                if( flag.equals("0") ){
+                	System.out.println("안 읽음");
+                	emailList.add(new Email(realAddress, msg.getSentDate().toString(), msg.getSubject(), false));
+                }
+                else{
+                	System.out.println("읽음");
+                	emailList.add(new Email(realAddress, msg.getSentDate().toString(), msg.getSubject(), true));
+                }
+                
+                //System.out.println(msg.getFlags().toString().substring(idx, msg.getFlags().toString().length()));
+                //////// 확인한 메일 : flag ----20
+                //////// 확인 안 한 메일 : flag ----0
+                
+                
+                //emailList.add(new Email(realAddress, msg.getSentDate().toString(), msg.getSubject()));
+                
+                //msg.setHeader("Content-Type", "multipart/related");
+                
+                /*if( msg.getContent() instanceof Multipart ){
+                	Multipart mp = (Multipart) msg.getContent();
+                    BodyPart bp = mp.getBodyPart(0);
+                }
+                else{
+                	System.out.println("SENT DATE:" + msg.getSentDate());
+                	System.out.println("SUBJECT:" + msg.getSubject());
+                }*/
+                
+                //System.out.println("CONTENT:" + bp.getContent());
+            }
+        } catch (Exception mex) {
+            mex.printStackTrace();
+        }
+        
+        return emailList;
+    }
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getUserPw() {
+		return userPw;
+	}
+
+	public void setUserPw(String userPw) {
+		this.userPw = userPw;
+	}
+    
+    
+}

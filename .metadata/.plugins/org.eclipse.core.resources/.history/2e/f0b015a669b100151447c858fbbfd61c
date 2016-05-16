@@ -1,0 +1,15 @@
+package model;
+
+public class ScheduleInfo {
+	private int scheduleCode;
+	private String scheduleDate;
+	private String scheduleTitle;
+	private Boolean scheduleFlag;
+	
+	public ScheduleInfo(int scheduleCode, String scheduleDate, String scheduleTitle, Boolean scheduleFlag){
+		this.scheduleCode = scheduleCode;
+		this.scheduleDate = scheduleDate;
+		this.scheduleTitle = scheduleTitle;
+		this.scheduleFlag = scheduleFlag;
+	}
+}

@@ -1,0 +1,83 @@
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+    pageEncoding="EUC-KR"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<title>PIE Test Page</title>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script>
+var widgetList = {widget_id_1:{widgetType:1, xPos:132, yPos:191, xSize:133, ySize:344},
+		widget_id_2 : {widgetType:2, xPos:142, yPos:201, xSize:33, ySize:44},
+		widget_id_3 : {widgetType:3, xPos:13, yPos:19, xSize:13, ySize:34}};
+
+function sendWidgetList(){
+	//alert("테스트 모듈");
+	var widgetList = {widget_id_1:{widgetType:1, xPos:132, yPos:191, xSize:133, ySize:344},
+			widget_id_2 : {widgetType:2, xPos:142, yPos:201, xSize:33, ySize:44},
+			widget_id_3 : {widgetType:3, xPos:13, yPos:19, xSize:13, ySize:34}};
+	
+	/* $.ajax({
+		url : "update_widget",
+		type : 'POST',
+		data : {
+			widget_list : JSON.stringify(widgetList)
+		},
+		dataType : 'json'
+	}); */
+	
+	/*$.post("update_widget", {
+		widget_list : JSON.stringify(widgetList)
+	}, function(result){
+		alert(result);
+	});*/
+}
+
+function removeKeyValue(){
+	delete widgetList[widget_id_1];
+	
+	alert(JSON.stringify(widgetList));
+}
+
+function receiveWidgetList(){
+	//alert("테스트 모듈");
+	/*$.ajax({
+		url : "get_widget_list",
+		type : 'GET',
+		data : {
+			widget_list : JSON.stringify(widgetList)
+		},
+		dataType : 'json'
+	});*/
+	
+	$.get("http://210.118.74.117:8100/PIE/get_widget_list", function(data){
+		alert(JSON.stringify(data.lastSearchBar));
+		alert(JSON.stringify(data.widgetList));
+	});
+}
+
+function test(){
+	var array = {"2016-01-03":[{"task":"test","check":true},{"task":"test2","check":true}]};
+	
+	$.post("http://210.118.74.117:8100/PIE/update_schedule", {
+        schedule_list: JSON.stringify(array)
+    }, function (result) {
+    });
+}
+</script>
+</head>
+<body>
+<iframe src="http://www.google.com/uds/modules/elements/newsshow/iframe.html?format=300x250"
+                 frameborder="0" width="750" height="350"
+                 marginwidth="0" marginheight="0">
+</iframe>
+<br/>
+<button onclick="sendWidgetList()">서버로 위젯 리스트 보내기</button>
+<br/>
+<br/>
+<button onclick="receiveWidgetList()">서버로부터 위젯 리스트 받아오기</button>
+<br/>
+<br/>
+<button onclick="test()">테스트</button>
+</body>
+</html>

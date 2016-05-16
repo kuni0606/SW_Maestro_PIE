@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="getWeather" key="selection"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="true" key="wrap"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="getWeather"/>
+			<item value="표2016 (완)&#x09;PIE (완)&#x09;WallSon (중)&#x09;MOA (중)&#x09;Gear2 Hotel Solution (중)"/>
+			<item value="getWe"/>
+			<item value="#slideshow"/>
+			<item value="slideshow"/>
+			<item value="close_slide"/>
+			<item value="opc"/>
+			<item value="close"/>
+		</list>
+		<list key="replacehistory">
+			<item value="#00CED1"/>
+			<item value="#1E90FF"/>
+			<item value=""/>
+			<item value="./"/>
+			<item value="content"/>
+			<item value="title"/>
+			<item value="emailTypeNum"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="357" key="DIALOG_WIDTH"/>
+		<item value="1|맑은 고딕|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|맑은 고딕" key="DIALOG_FONT_NAME"/>
+		<item value="394" key="DIALOG_HEIGHT"/>
+		<item value="144" key="DIALOG_X_ORIGIN"/>
+		<item value="254" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>

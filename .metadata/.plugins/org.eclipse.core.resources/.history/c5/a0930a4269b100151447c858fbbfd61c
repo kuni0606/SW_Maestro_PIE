@@ -1,0 +1,74 @@
+package model;
+
+public class ScheduleInfo {
+	private int scheduleCode;
+	private String scheduleDate;
+	private String scheduleStartTime;
+	private String scheduleEndTime;
+	private String scheduleTitle;
+	private String scheduleContent;
+	
+	public ScheduleInfo(String scheduleDate, String scheduleStartTime, String scheduleEndTime, String scheduleTitle, String scheduleContent) {
+		this.scheduleDate = scheduleDate;
+		this.scheduleStartTime = scheduleStartTime;
+		this.scheduleEndTime = scheduleEndTime;
+		this.scheduleTitle = scheduleTitle;
+		this.scheduleContent = scheduleContent;
+	}
+	
+	public ScheduleInfo(String scheduleDate, String scheduleTitle, String scheduleContent) {
+		this.scheduleDate = scheduleDate;
+		this.scheduleStartTime = "";
+		this.scheduleEndTime = "";
+		this.scheduleTitle = scheduleTitle;
+		this.scheduleContent = scheduleContent;
+	}
+	
+	public ScheduleInfo(String scheduleDate, String scheduleStartTime, String scheduleEndTime, String scheduleTitle) {
+		this.scheduleDate = scheduleDate;
+		this.scheduleStartTime = scheduleStartTime;
+		this.scheduleEndTime = scheduleEndTime;
+		this.scheduleTitle = scheduleTitle;
+		this.scheduleContent = "";
+	}
+
+	public String getScheduleDate() {
+		return scheduleDate;
+	}
+
+	public void setScheduleDate(String scheduleDate) {
+		this.scheduleDate = scheduleDate;
+	}
+
+	public String getScheduleStartTime() {
+		return scheduleStartTime;
+	}
+
+	public void setScheduleStartTime(String scheduleStartTime) {
+		this.scheduleStartTime = scheduleStartTime;
+	}
+
+	public String getScheduleEndTime() {
+		return scheduleEndTime;
+	}
+
+	public void setScheduleEndTime(String scheduleEndTime) {
+		this.scheduleEndTime = scheduleEndTime;
+	}
+
+	public String getScheduleTitle() {
+		return scheduleTitle;
+	}
+
+	public void setScheduleTitle(String scheduleTitle) {
+		this.scheduleTitle = scheduleTitle;
+	}
+
+	public String getScheduleContent() {
+		return scheduleContent;
+	}
+
+	public void setScheduleContent(String scheduleContent) {
+		this.scheduleContent = scheduleContent;
+	}
+}

@@ -1,0 +1,157 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>Image Upload</title>
+<style>
+#slideshow { 
+    margin: 50px auto; 
+    position: relative; 
+    width: 240px; 
+    height: 240px; 
+    padding: 10px; 
+    box-shadow: 0 0 20px rgba(0,0,0,0.4); 
+}
+
+#slideshow > div { 
+    position: absolute; 
+    top: 10px; 
+    left: 10px; 
+    right: 10px; 
+    bottom: 10px; 
+}
+</style>
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script>
+var galleryList = [27021666, 64820969] ;
+//var galleryList = [14069037, 26391431, 27343994, 27966134, 31919820, 76791006, 77864728, 96630743];
+
+var i=0;
+
+/* setInterval(function(){	
+	if( i >= galleryList.length ){
+		i=0;
+	}
+	
+	$('#gallery').attr("src", "http://210.118.74.117:8100/PIE/get_picture?picture_code=" + galleryList[i++]);
+	
+	//document.getElementById("gallery").src = "http://210.118.74.117:8100/PIE/get_picture?picture_code=" + galleryList[i++];
+}, 3000); */
+
+function getPictureList(){
+	$.get("get_picture_list", {
+		
+	}, function(data){
+		if( data.msg == "Success" ){
+			var gallery = document.getElementById("gallery");
+			
+			for(var i=0; i<data.pictureList.length; i++){
+				var pic = document.createElement('img');
+				pic.src = data.pictureList[i].path;
+				pic.style.width = "300px";
+				pic.style.height = "300px";
+				
+				gallery.appendChild(pic);
+			}
+		}
+	});
+}
+
+function deletePicture(){
+	$.post("delete_picture",{
+		picture_code : 66404429
+	}, function(data){
+		alert(data.msg);
+	});
+}
+
+function uploadFile(){
+	var fileSelect = document.getElementById("file");
+	var files = fileSelect.files;
+	
+	var formData = new FormData();
+	
+	//alert(files.length);
+	
+	for (var i = 0; i < files.length; i++) {
+		var file = files[i];
+
+		
+		alert(file);
+		// Check the file type.
+		/* if (!file.type.match('image.*')) {
+			continue;
+		} */
+
+		// Add the file to the request.
+		formData.append('file', file, file.name);
+	}
+	
+	/* $.post("upload_picture", {
+		file : formData
+	}, function(data){
+		alert(data.msg);
+	}); */
+	
+	 $.ajax({
+         url: 'upload_picture',
+         type: 'POST',
+         data: formData,
+         success: function (data) {
+             alert(data.msg);
+         },
+         cache: false,
+         contentType: "multipart/form-data",
+         processData: false
+     });
+}
+</script>
+</head>
+<body>
+<!--  <form action="upload_picture" method="post" enctype="multipart/form-data" name="upload_form" id="upload_form">
+   <center>
+   <table border="1">
+       <tr>
+           <td align="center"><b>Multiple file Upload</td>
+       </tr>
+       <tr>
+           <td>
+               Specify file: <input name="file" type="file" id="file" multiple>
+           </td>
+       </tr>
+         <tr>
+            <td align="center">
+               <input type="submit" name="Submit" value="Submit files"/>
+            </td>
+         </tr>
+    </table>
+    <center>
+ </form> -->
+ 
+ <input name="file" type="file" id="file" multiple>
+<button onclick="uploadFile()">업로드</button> 
+ 
+ <br/>
+ <br/>
+ <br/>
+ <br/>
+ <br/>
+ 
+ <button onclick="getPictureList()">전체 사진 리스트 가져오기</button>
+ 
+   <br/>
+ <br/>
+ <br/>
+ <br/>
+ <br/>
+ 
+ <button onclick="deletePicture()">사진 1장 지우기</button>
+
+ 
+ <div id="gallery">
+ 씨부랄
+ </div>
+</body>
+
+</html> 

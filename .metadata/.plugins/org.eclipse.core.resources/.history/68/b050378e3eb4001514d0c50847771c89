@@ -1,0 +1,41 @@
+package model;
+
+public class BookMarkInfo {
+	private int code;
+	private String title;
+	private String content;
+	
+	public BookMarkInfo(){
+		this.code = -1;
+		this.title = "";
+		this.content = "";
+	}
+	
+	public BookMarkInfo(int code, String title, String content){
+		this.code = code;
+		this.title = title;
+		this.content = content;
+	}
+	
+	public BookMarkInfo(String content){
+		this.code = -1;
+		this.title = "";
+		this.content = content;
+	}
+
+	public String gettitle() {
+		return title;
+	}
+
+	public void settitle(String title) {
+		this.title = title;
+	}
+
+	public String getcontent() {
+		return content;
+	}
+
+	public void setcontent(String content) {
+		this.content = content;
+	}
+}

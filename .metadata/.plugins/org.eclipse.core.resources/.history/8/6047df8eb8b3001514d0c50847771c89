@@ -1,0 +1,49 @@
+package model;
+
+public class PictureInfo {
+	private int pictureCode;
+	private String pictureName;
+	private int pictureFlag;
+	
+	public PictureInfo() {
+		this.pictureCode = -1;
+		this.pictureName = "";
+		this.pictureFlag = -1;
+	}
+	
+	public PictureInfo(int pictureCode, String pictureName, int pictureFlag) {
+		this.pictureCode = pictureCode;
+		this.pictureName = pictureName;
+		this.pictureFlag = pictureFlag;
+	}
+	
+	public PictureInfo(String picturePath) {
+		this.pictureType = "";
+		this.pictureName = "";
+		this.picturePath = picturePath;
+	}
+
+	public String getPictureType() {
+		return pictureType;
+	}
+
+	public void setPictureType(String pictureType) {
+		this.pictureType = pictureType;
+	}
+
+	public String getPictureName() {
+		return pictureName;
+	}
+
+	public void setPictureName(String pictureName) {
+		this.pictureName = pictureName;
+	}
+
+	public String getPicturePath() {
+		return picturePath;
+	}
+
+	public void setPicturePath(String picturePath) {
+		this.picturePath = picturePath;
+	}
+}

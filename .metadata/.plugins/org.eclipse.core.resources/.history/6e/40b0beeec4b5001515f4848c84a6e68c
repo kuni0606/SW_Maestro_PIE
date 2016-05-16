@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PIE</title>
+
+    <!--jQuery-->
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery.simpleWeather/3.0.2/jquery.simpleWeather.min.js"></script>
+
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700,inherit,400" rel="stylesheet" type="text/css">
+    <!--Bootstrap-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+            crossorigin="anonymous"></script>
+    <style>
+        li {
+            cursor: pointer;
+            padding-left: 7px;
+        }
+
+        .btn {
+            margin-top: -4px;
+        }
+
+        .widget_headline {
+            margin-top: 2px;
+            margin-left: 5px;
+            float: left;
+        }
+
+        .widget_deleteBtn {
+            float: right;
+        }
+
+        textarea {
+            border-radius: 5px;
+        }
+
+        img {
+            cursor: pointer;
+        }
+
+        img:hover {
+            opacity: 0.7;
+        }
+
+        .widget_item {
+            padding-left: 13px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            font-size: 17px;
+        }
+
+        .div_Container {
+            position: absolute;
+            background-color: white;
+            padding: 0.5em;
+            border-radius: 5px;
+            box-shadow: 1px 2px 10px gray;
+        }
+
+        .dropmenu_img {
+            width: 20px;
+            height: 20px;
+            margin-top: -2px;
+        }
+    </style>
+    <style>
+        /*----- Accordion -----*/
+        .accordion, .accordion * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .accordion {
+            overflow: hidden;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
+            border-radius: 3px;
+            background: #f7f7f7;
+        }
+
+        /*----- Section Titles -----*/
+        .accordion-section-title {
+            width: 100%;
+            padding: 15px;
+            display: inline-block;
+            border-bottom: 1px solid #1a1a1a;
+            background: #333;
+            transition: all linear 0.15s;
+            /* Type */
+            font-size: 1.200em;
+            text-shadow: 0px 1px 0px #1a1a1a;
+            color: #fff;
+        }
+
+        .accordion-section-title.active, .accordion-section-title:hover {
+            background: #4c4c4c;
+            /* Type */
+            text-decoration: none;
+        }
+
+        .accordion-section:last-child .accordion-section-title {
+            border-bottom: none;
+        }
+
+        /*----- Section Content -----*/
+        .accordion-section-content {
+            padding: 15px;
+            display: none;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            function close_accordion_section() {
+                $('.accordion .accordion-section-title').removeClass('active');
+                $('.accordion .accordion-section-content').slideUp(300).removeClass('open');
+            }
+
+            $('.accordion-section-title').click(function (e) {
+                alert("asdf");
+                // Grab current anchor value
+                var currentAttrValue = $(this).attr('href');
+
+                if ($(e.target).is('.active')) {
+                    close_accordion_section();
+                } else {
+                    close_accordion_section();
+
+                    // Add active class to section title
+                    $(this).addClass('active');
+                    // Open up the hidden content panel
+                    $('.accordion ' + currentAttrValue).slideDown(300).addClass('open');
+                }
+
+                e.preventDefault();
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $("textarea").focusout(function () {
+                alert("hi");
+            });
+        });
+
+        onload = function on_load() {
+            //get
+            $.get("http://210.118.74.117:8100/PIE/get_widget_list", function (data) {
+                click_Browser(data.lastSearchBar);
+                var tempData = data.widgetList;
+
+                for (var i = 0; i < tempData.length; i++) {
+                    get_Widget(tempData[i].widgetId, tempData[i].w_Code, tempData[i].widgetType);
+                    widgetData[tempData[i].widgetId] = {
+                        "w_Code": tempData[i].w_Code,
+                        "widgetType": tempData[i].widgetType,
+                        "xPos": parseInt(tempData[i].xPos),
+                        "yPos": parseInt(tempData[i].yPos),
+                        "xSize": parseInt(tempData[i].xSize),
+                        "ySize": parseInt(tempData[i].ySize)
+                    };
+                    div_c.style.left = parseInt((widgetData[div_c.id].xPos * $(window).width()) / 100) + 'px';
+                    div_c.style.top = parseInt((widgetData[div_c.id].yPos * $(window).height()) / 100) + 'px';
+                    div_c.style.width = parseInt((widgetData[div_c.id].xSize * $(window).width()) / 100) + 'px';
+                    div_c.style.height = parseInt((widgetData[div_c.id].ySize * $(window).height()) / 100) + 'px';
+                }
+            });
+        }
+    </script>
+    <script>
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                loadWeather(position.coords.latitude + ',' + position.coords.longitude);
+            });
+        } else {
+            alert("아쉽 못 띄움.");
+        }
+        $(document).ready(function () {
+            setInterval(getWeather, 10000);
+        });
+        function loadWeather(location, woeid) {
+            $.simpleWeather({
+                location: location,
+                woeid: woeid,
+                unit: 'c',
+                success: function (weather) {
+                    high = 'High  ' + weather.forecast[0].high + '';
+                    low = 'Low  ' + weather.forecast[0].low + '';
+                    w_text = weather.text;
+                    date = 'Weather - "' + weather.forecast[1].date + '"';
+                    day = weather.forecast[0].day;
+                    city = weather.country;
+                    temp = weather.temp + '&deg;';
+                    wcode = '<img class="weathericon" src="image/weathericons/' + weather.code + '.svg" style="width:50%;">';
+                    wind = '<p>' + weather.wind.speed + '</p><p>' + weather.units.speed + '</p>';
+                    humidity = weather.humidity + '%';
+                    thumbnail1 = '<img class="weathericon" src="' + weather.forecast[1].thumbnail + '" style="width:50%;">';
+                    day1 = weather.forecast[1].day;
+                    thumbnail2 = '<img class="weathericon" src="' + weather.forecast[2].thumbnail + '" style="width:50%;">';
+                    day2 = weather.forecast[2].day;
+                    thumbnail3 = '<img class="weathericon" src="' + weather.forecast[3].thumbnail + '" style="width:50%;">';
+                    day3 = weather.forecast[3].day;
+
+                    $(".location").text(city);
+                    $(".temperature").html(temp);
+                    $(".climate_bg").html(wcode);
+                    $(".windspeed").html(wind);
+                    $(".humidity").text(humidity);
+                    $(".date").html(date);
+                    $(".w_text").text(w_text);
+                    $(".day").html(day);
+                    $(".t_nail_1").html(thumbnail1);
+                    $(".t_nail_2").html(thumbnail2);
+                    $(".t_nail_3").html(thumbnail3);
+                    $(".day1").html(day1);
+                    $(".day2").html(day2);
+                    $(".day3").html(day3);
+                    $(".high").html(high);
+                    $(".low").html(low);
+                },
+
+                error: function (error) {
+                    $(".error").html('<p>' + error + '</p>');
+                }
+            });
+        }
+    </script>
+    <script>
+        var widgetData = {};
+
+        var div_c;
+        var div_1;
+        var div_2;
+        var div_3;
+        var div_4;
+        var table;
+        var tbody;
+        var tr;
+        var td;
+
+        var div_w;
+        var p_temperature;
+        var p_high;
+        var p_low;
+        var p_humidity;
+        var climate_div;
+        var w_img_1;
+        var w_img_2;
+
+        var window_width = ($(window).width()) / 2 - 100;
+        var window_height = ($(window).height()) / 2 - 200;
+
+        function get_Widget(w_name, w_code, w_type) {
+            div_c = document.createElement('div');
+            div_c.id = w_name;
+            div_c.className = "div_Container";
+            table = document.createElement('table');
+            table.style.width = "100%";
+            table.style.height = "100%";
+            tbody = document.createElement('tbody');
+            tr = document.createElement('tr');
+            tr.style.width = "100%";
+            td = document.createElement('td');
+            td.style.width = "100%";
+            div_1 = document.createElement('div');
+            div_1.style.width = "100%";
+            div_1.style.marginBottom = "6px";
+            div_1.style.display = "table";
+            div_2 = document.createElement('div');
+            div_2.style.display = "table-cell";
+            div_2.style.width = "15%";
+            div_2.className = "widget_headline";
+            div_2.appendChild(document.createTextNode(w_name));
+            div_1.appendChild(div_2);
+            div_3 = document.createElement('div');
+            div_3.style.display = "table-cell";
+            div_3.style.width = "60%";
+
+            if (w_type == 3) {
+                var input_text = document.createElement('input');
+                input_text.id = w_code + '_src';
+                input_text.type = "text";
+                input_text.style.width = "70%";
+                input_text.placeholder = "insert URL";
+                input_text.value = "http://";
+                div_3.appendChild(input_text);
+                var input_img = document.createElement('img');
+                input_img.src = "image/go.png";
+                input_img.style.width = "20px";
+                input_img.style.height = "20px";
+                input_img.onclick = goto_URL;
+                div_3.appendChild(input_img);
+            }
+
+            div_1.appendChild(div_3);
+            div_4 = document.createElement('div');
+            div_4.style.display = "table-cell";
+            div_4.style.width = "25%";
+            switch (w_type) {
+                case 1:
+                    break;
+                case 2:
+                    var mail_btn = document.createElement('input');
+                    mail_btn.type = "button";
+                    mail_btn.id = "mail_btn";
+                    mail_btn.style.width = "20px";
+                    mail_btn.style.height = "20px";
+                    mail_btn.style.float = "right";
+                    mail_btn.onclick = function () {
+                        var dialog;
+
+                        dialog = $("#dialog-form").dialog({
+                            autoOpen: false,
+                            width: 300,
+                            height: 320,
+                            modal: true,
+                            buttons: {
+                                "등록": function () {
+                                    var radio = $(':radio[name="optradio"]:checked');
+                                    var e_id = $("#email_id");
+                                    var e_pw = $("#email_password");
+
+                                    //서버에 타입이랑 아이디 비번 넘겨줌
+                                            //todo
+
+                                    //등록이 완료되었다고 메시지가 오면 등록이 완료되었다고 알려줌
+                                    alert("등록이 완료되었습니다.");
+                                    if(radio==1){
+                                        $("#google_id").val(e_id+'@gmail.com');
+                                    }
+                                    else if(radio==2){
+                                        $("#naver_id").val(e_id+'@naver.com');
+                                    }
+                                    e_id.val('');
+                                    e_pw.val('');
+                                    dialog.dialog("close");
+                                },
+                                "취소": function () {
+                                    dialog.dialog("close");
+                                }
+                            }
+                        });
+
+                        dialog.dialog('open');
+                    };
+                    div_4.appendChild(mail_btn);
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    var content_img = document.createElement('img');
+                    content_img.src = "image/content_save.png";
+                    content_img.style.width = "20px";
+                    content_img.style.height = "20px";
+                    content_img.onclick = goto_Content;
+                    content_img.style.float = "right";
+                    div_4.appendChild(content_img);
+                    break;
+                case 7:
+                    break;
+            }
+            div_1.appendChild(div_4);
+            td.appendChild(div_1);
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+
+            tr = document.createElement('tr');
+            tr.style.width = "100%";
+            tr.style.height = "100%";
+            td = document.createElement('td');
+            td.style.width = "100%";
+            td.style.height = "100%";
+            switch (w_type) {
+                case 1:
+                    break;
+                case 2:
+                    var email_div = document.createElement('div');
+                    email_div.className = "accordion";
+                    var e_div_google = document.createElement('div');
+                    e_div_google.className = "accordion-section";
+                    var e_atag_g = document.createElement('a');
+                    e_atag_g.id = "google_id";
+                    e_atag_g.className = "accordion-section-title";
+                    e_atag_g.href = "#accordion-2";
+                    e_atag_g.appendChild(document.createTextNode("Google"));
+                    e_atag_g.onclick = function (e) {
+                        function close_accordion_section() {
+                            $('.accordion .accordion-section-title').removeClass('active');
+                            $('.accordion .accordion-section-content').slideUp(300).removeClass('open');
+                        }
+
+                        var currentAttrValue = $(this).attr('href');
+
+                        if ($(e.target).is('.active')) {
+                            close_accordion_section();
+                        } else {
+                            close_accordion_section();
+                            $(this).addClass('active');
+                            $('.accordion ' + currentAttrValue).slideDown(300).addClass('open');
+                        }
+                        e.preventDefault();
+                    };
+                    e_div_google.appendChild(e_atag_g);
+                    var e_div_google_c = document.createElement('div');
+                    e_div_google_c.id = "accordion-2";
+                    e_div_google_c.className = "accordion-section-content";
+                    var e_table_1 = document.createElement('table');
+                    e_table_1.style.width = "100%";
+                    var e_tbody_1 = document.createElement('tbody');
+                    var e_tr_1;
+                    var e_td_1;
+                    for (var i = 0; i < 5; i++) {
+                        e_tr_1 = document.createElement('tr');
+                        e_tr_1.style.width = "100%";
+                        for (var j = 0; j < 3; j++) {
+                            e_td_1 = document.createElement('td');
+                            if (j == 0) {
+                                e_td_1.style.width = "20%";
+                                e_td_1.appendChild(document.createTextNode("d"));
+                                e_tr_1.appendChild(e_td_1);
+                            } else if (j == 1) {
+                                e_td_1.style.width = "70%";
+                                e_td_1.appendChild(document.createTextNode("e"));
+                                e_tr_1.appendChild(e_td_1);
+                            } else if (j == 2) {
+                                e_td_1.style.width = "10%";
+                                e_td_1.appendChild(document.createTextNode("f"));
+                                e_tr_1.appendChild(e_td_1);
+                            }
+                        }
+                        e_tbody_1.appendChild(e_tr_1);
+                    }
+                    e_table_1.appendChild(e_tbody_1);
+                    e_div_google_c.appendChild(e_table_1);
+                    e_div_google.appendChild(e_div_google_c);
+                    email_div.appendChild(e_div_google);
+                    var e_div_naver = document.createElement('div');
+                    e_div_naver.className = "accordion-section";
+                    var e_atag_n = document.createElement('a');
+                    e_atag_n.id = "naver_id";
+                    e_atag_n.className = "accordion-section-title";
+                    e_atag_n.href = "#accordion-1";
+                    e_atag_n.appendChild(document.createTextNode("Naver"));
+                    e_atag_n.onclick = function (e) {
+                        function close_accordion_section() {
+                            $('.accordion .accordion-section-title').removeClass('active');
+                            $('.accordion .accordion-section-content').slideUp(300).removeClass('open');
+                        }
+
+                        var currentAttrValue = $(this).attr('href');
+
+                        if ($(e.target).is('.active')) {
+                            close_accordion_section();
+                        } else {
+                            close_accordion_section();
+                            $(this).addClass('active');
+                            $('.accordion ' + currentAttrValue).slideDown(300).addClass('open');
+                        }
+                        e.preventDefault();
+                    };
+                    e_div_naver.appendChild(e_atag_n);
+                    var e_div_naver_c = document.createElement('div');
+                    e_div_naver_c.id = "accordion-1";
+                    e_div_naver_c.className = "accordion-section-content";
+                    var e_table = document.createElement('table');
+                    e_table.style.width = "100%";
+                    var e_tbody = document.createElement('tbody');
+                    var e_tr;
+                    var e_td;
+                    for (var i = 0; i < 5; i++) {
+                        e_tr = document.createElement('tr');
+                        e_tr.style.width = "100%";
+                        for (var j = 0; j < 3; j++) {
+                            e_td = document.createElement('td');
+                            if (j == 0) {
+                                e_td.style.width = "20%";
+                                e_td.appendChild(document.createTextNode("a"));
+                                e_tr.appendChild(e_td);
+                            } else if (j == 1) {
+                                e_td.style.width = "70%";
+                                e_td.appendChild(document.createTextNode("b"));
+                                e_tr.appendChild(e_td);
+                            } else if (j == 2) {
+                                e_td.style.width = "10%";
+                                e_td.appendChild(document.createTextNode("c"));
+                                e_tr.appendChild(e_td);
+                            }
+                        }
+                        e_tbody.appendChild(e_tr);
+                    }
+                    e_table.appendChild(e_tbody);
+                    e_div_naver_c.appendChild(e_table);
+                    e_div_naver.appendChild(e_div_naver_c);
+                    email_div.appendChild(e_div_naver);
+                    td.appendChild(email_div);
+                    break;
+                case 3:
+                    var iframe = document.createElement('iframe');
+                    iframe.id = w_code;
+                    iframe.style.padding = "5px";
+                    iframe.style.width = "100%";
+                    iframe.style.height = "100%";
+                    iframe.src = "";
+
+                    input_text.onkeydown = function (event) {
+                        if (event.keyCode == 13) {
+                            $.post("http://210.118.74.117:8100/PIE/update_widget_content", {
+                                widgetType: 3,
+                                w_Code: iframe.id,
+                                url: input_text.value
+                            }, function (data) {
+
+                            });
+                            iframe.src = input_text.value;
+                        }
+                    };
+                    td.appendChild(iframe);
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    var textarea = document.createElement('textarea');
+                    textarea.id = w_code;
+                    textarea.focusout = function () {
+                        $.post("http://210.118.74.117:8100/PIE/update_widget_content", {
+                            widgetType: 6,
+                            w_Code: textarea.id,
+                            content: textarea.value,
+                            title: "title"
+                        }, function (data) {
+
+                        });
+                    };
+                    textarea.style.resize = "none";
+                    textarea.style.padding = "5px";
+                    textarea.style.width = "100%";
+                    textarea.style.height = "100%";
+                    td.appendChild(textarea);
+                    break;
+                case 7:
+                    div_w = document.createElement('div');
+                    div_w.style.width = "100%";
+                    div_w.style.height = "100%";
+                    var w_table = document.createElement('table');
+                    w_table.style.width = "100%";
+                    w_table.style.height = "60%";
+                    w_table.style.backgroundColor = "#1ab1ed";
+                    var w_tbody = document.createElement('tbody');
+                    var w_tr = document.createElement('tr');
+                    w_tr.style.width = "100%";
+                    var w_td = document.createElement('td');
+                    w_td.style.width = "40%";
+                    var w_div_1 = document.createElement('div');
+                    w_div_1.style.display = "table";
+                    w_div_1.style.width = "100%";
+                    var temperature_div = document.createElement('div');
+                    temperature_div.style.verticalAlign = "middle";
+                    temperature_div.style.display = "table-cell";
+                    p_temperature = document.createElement('p');
+                    p_temperature.className = "temperature";
+                    p_temperature.style.fontSize = "600%";
+                    p_temperature.style.textAlign = "center";
+                    p_temperature.style.margin = "0px";
+                    temperature_div.appendChild(p_temperature);
+                    w_div_1.appendChild(temperature_div);
+                    w_td.appendChild(w_div_1);
+                    var w_div_1_1 = document.createElement('div');
+                    w_div_1_1.style.display = "table";
+                    w_div_1_1.style.width = "100%";
+                    p_high = document.createElement('div');
+                    p_high.style.verticalAlign = "middle";
+                    p_high.style.textAlign = "center";
+                    p_high.style.display = "table-cell";
+                    p_high.className = "high";
+                    w_div_1_1.appendChild(p_high);
+                    p_low = document.createElement('div');
+                    p_low.style.verticalAlign = "middle";
+                    p_low.style.textAlign = "center";
+                    p_low.style.display = "table-cell";
+                    p_low.className = "low";
+                    w_div_1_1.appendChild(p_low);
+                    w_td.appendChild(w_div_1_1);
+                    w_tr.appendChild(w_td);
+                    var w_td_1 = document.createElement('td');
+                    w_td_1.style.width = "60%";
+                    climate_div = document.createElement('div');
+                    climate_div.style.textAlign = "center";
+                    climate_div.className = "climate_bg";
+                    w_td_1.appendChild(climate_div);
+                    var w_div_2 = document.createElement('div');
+                    w_div_2.style.display = "table";
+                    w_div_2.style.width = "100%";
+                    w_div_2.style.height = "50%";
+                    var w_div_under_1 = document.createElement('div');
+                    w_div_under_1.style.display = "table-cell";
+                    w_div_under_1.style.verticalAlign = "middle";
+                    w_img_1 = document.createElement('img');
+                    w_img_1.className = "dropicon";
+                    w_img_1.src = "image/Droplet.svg";
+                    w_img_1.style.width = "100%";
+                    w_div_under_1.appendChild(w_img_1);
+                    w_div_2.appendChild(w_div_under_1);
+                    var w_div_under_2 = document.createElement('div');
+                    w_div_under_2.style.display = "table-cell";
+                    w_div_under_2.style.verticalAlign = "middle";
+                    p_humidity = document.createElement('p');
+                    p_humidity.className = "humidity";
+                    w_div_under_2.appendChild(p_humidity);
+                    w_div_2.appendChild(w_div_under_2);
+                    var w_div_under_3 = document.createElement('div');
+                    w_div_under_3.style.display = "table-cell";
+                    w_div_under_3.style.verticalAlign = "middle";
+                    w_img_2 = document.createElement('img');
+                    w_img_2.className = "windicon";
+                    w_img_2.src = "image/Wind.svg";
+                    w_img_2.style = "width:100%;";
+                    w_div_under_3.appendChild(w_img_2);
+                    w_div_2.appendChild(w_div_under_3);
+                    var w_div_under_4 = document.createElement('div');
+                    w_div_under_4.style.display = "table-cell";
+                    w_div_under_4.style.verticalAlign = "middle";
+                    w_div_under_4.className = "windspeed";
+                    w_div_2.appendChild(w_div_under_4);
+                    w_td_1.appendChild(w_div_2);
+                    w_tr.appendChild(w_td_1);
+                    w_tbody.appendChild(w_tr);
+                    w_table.appendChild(w_tbody);
+                    div_w.appendChild(w_table);
+                    var w_table_2 = document.createElement('table');
+                    w_table_2.style.width = "100%";
+                    w_table_2.style.height = "40%";
+                    w_table_2.style.backgroundColor = "#1ab1ed";
+                    var w_tbody_2 = document.createElement('tbody');
+                    var w_tr_2 = document.createElement('tr');
+                    w_tr_2.style.width = "100%";
+                    var w_td_2_1 = document.createElement('td');
+                    w_td_2_1.style.width = "33%";
+                    var forecast_1_div = document.createElement('div');
+                    forecast_1_div.style.textAlign = "center";
+                    forecast_1_div.className = "t_nail_1";
+                    w_td_2_1.appendChild(forecast_1_div);
+                    var forecast_1_1_div = document.createElement('div');
+                    forecast_1_1_div.style.textAlign = "center";
+                    forecast_1_1_div.className = "day1";
+                    w_td_2_1.appendChild(forecast_1_1_div);
+                    w_tr_2.appendChild(w_td_2_1);
+
+                    var w_td_2_2 = document.createElement('td');
+                    w_td_2_2.style.width = "33%";
+                    var forecast_2_div = document.createElement('div');
+                    forecast_2_div.style.textAlign = "center";
+                    forecast_2_div.className = "t_nail_2";
+                    w_td_2_2.appendChild(forecast_2_div);
+                    var forecast_2_1_div = document.createElement('div');
+                    forecast_2_1_div.style.textAlign = "center";
+                    forecast_2_1_div.className = "day2";
+                    w_td_2_2.appendChild(forecast_2_1_div);
+                    w_tr_2.appendChild(w_td_2_2);
+
+                    var w_td_2_3 = document.createElement('td');
+                    w_td_2_3.style.width = "33%";
+                    var forecast_3_div = document.createElement('div');
+                    forecast_3_div.style.textAlign = "center";
+                    forecast_3_div.className = "t_nail_3";
+                    w_td_2_3.appendChild(forecast_3_div);
+                    var forecast_3_1_div = document.createElement('div');
+                    forecast_3_1_div.style.textAlign = "center";
+                    forecast_3_1_div.className = "day3";
+                    w_td_2_3.appendChild(forecast_3_1_div);
+                    w_tr_2.appendChild(w_td_2_3);
+                    w_tbody_2.appendChild(w_tr_2);
+                    w_table_2.appendChild(w_tbody_2);
+                    div_w.appendChild(w_table_2);
+                    td.appendChild(div_w);
+                    break;
+            }
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+            table.appendChild(tbody);
+            div_c.appendChild(table);
+            document.getElementById('body').appendChild(div_c);
+            if (w_type == 3) {
+                $.post("http://210.118.74.117:8100/PIE/get_widget_content", {
+                    widgetType: 3,
+                    w_Code: iframe.id
+                }, function (data) {
+                    if (data.url == undefined) {
+                        iframe.src = "";
+                        input_text.value = "http://";
+                    } else {
+                        iframe.src = data.url;
+                        input_text.value = data.url;
+                    }
+                });
+            } else if (w_type == 6) {
+                $.post("http://210.118.74.117:8100/PIE/get_widget_content", {
+                    widgetType: 6,
+                    w_Code: textarea.id
+                }, function (data) {
+                    if (data.content == undefined) {
+                        textarea.value = "";
+                        textarea.placeholder = "새로운 내용을 입력하세요";
+                    } else {
+                        textarea.value = data.content;
+                    }
+                });
+            }
+        }
+
+        function goto_Content() {
+            var t_id = $(this).parent().parent().parent().parent().parent().parent().parent().attr('id');
+            var t_id_code = widgetData[t_id].w_Code;
+            var content = document.getElementById(t_id_code).value;
+            $.post("http://210.118.74.117:8100/PIE/update_widget_content", {
+                widgetType: 6,
+                w_Code: t_id_code,
+                content: content,
+                title: "title"
+            }, function (data) {
+
+            });
+            alert("저장되었습니다.");
+        }
+        function goto_URL() {
+            var f_id = $(this).parent().parent().parent().parent().parent().parent().parent().attr('id');
+            var f_id_code = widgetData[f_id].w_Code;
+            var url = document.getElementById(f_id_code + '_src').value;
+            var f_contents = document.getElementById(f_id_code);
+            f_contents.src = url;
+            $.post("http://210.118.74.117:8100/PIE/update_widget_content", {
+                widgetType: 3,
+                w_Code: f_id_code,
+                url: url
+            }, function (data) {
+
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        //데이터베이스에서 사용자가 지정한 브라우저의 번호를 가져와서 searchNum에 넣어야한다.
+        var searchNum = 0;
+
+        function searchURL() {
+            var search_Content = document.getElementById("search_bar").value;
+            document.getElementById("search_bar").value = "";
+
+            if (searchNum == 1)
+                window.location = 'https://www.google.co.kr/webhp?search=dddddd&gws_rd=cr,ssl&ei=_fs9VueKJcq_0gSUvqCwCA#newwindow=1&q=' + search_Content;
+            else if (searchNum == 2)
+                window.location = 'http://search.naver.com/search.naver?query=' + search_Content;
+            else if (searchNum == 3)
+                window.location = 'http://search.daum.net/search?w=tot&DA=YZR&t__nil_searchbox=btn&sug=&sugo=&sq=&o=&q=' + search_Content;
+            else if (searchNum == 4)
+                window.location = 'https://www.bing.com/search?q=' + search_Content + '&go=%EC%A0%9C%EC%B6%9C&qs=n&form=QBRE&pq=' + search_Content + '&sc=8-4&sp=-1&sk=&cvid=96A16D8248204D5583CEB8CFE8077BC9';
+            return false;
+        }
+
+        function click_Browser(b_num) {
+            var aa;
+            $.get("http://210.118.74.117:8100/PIE/last_search_bar", {
+                last_search_bar: b_num
+            }, function (data) {
+
+            });
+            searchNum = b_num;
+            if (searchNum == 1)
+                aa = 'Google';
+            else if (searchNum == 2)
+                aa = 'Naver';
+            else if (searchNum == 3)
+                aa = 'Daum';
+            else if (searchNum == 4)
+                aa = 'Bing';
+            var b_state = document.getElementById("search_bar");
+            b_state.placeholder = "Search for " + aa + " ...";
+        }
+        function to_Editor() {
+            location.href = "EditPage.html";
+        }
+        function log_out() {
+            $.post("http://210.118.74.117:8100/PIE/log_out");
+            location.href = "LoginForm.html";
+        }
+    </script>
+</head>
+<body id="body" style="background-color: #EEEEEE">
+<header class="" id="header" role="banner">
+    <nav class="navbar navbar-inverse">
+        <table style="width:100%;">
+            <tbody>
+            <tr style="width:100%;">
+                <td style="width:35%">
+
+                </td>
+                <td style="width:30%">
+                    <div style="width:100%; padding-top:7px;">
+                        <div style="float:left; width:100%">
+                            <form action="" autocomplete="on" method="get" onsubmit="return searchURL()">
+                                <input id="search_bar" style="margin:auto;width:100%;" type="text" class="form-control"
+                                       placeholder="Search for Google...">
+                            </form>
+                        </div>
+                        <div style="float:left; margin-left: -35px;" class="btn-group">
+                            <button style="background: transparent; border:none;" type="button"
+                                    class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                <span class="caret"></span>
+                            </button>
+                            <ul style="margin:0px;" class="dropdown-menu">
+                                <li id="b_google"
+                                    style="cursor:pointer; padding-left:13px; padding-top:1px; padding-bottom: 5px;"
+                                    onclick="click_Browser(1)"><img width="25" height="25" src="image/google.ico"/>&nbsp&nbsp&nbspGoogle
+                                </li>
+                                <li style="margin:0px;" role="separator" class="divider"></li>
+                                <li id="b_naver"
+                                    style="cursor:pointer; padding-left:13px; padding-top:5px; padding-bottom: 5px;"
+                                    onclick="click_Browser(2)"><img width="25" height="25" src="image/naver.png"/>&nbsp&nbsp&nbspNaver
+                                </li>
+                                <li style="margin:0px;" role="separator" class="divider"></li>
+                                <li id="b_daum"
+                                    style="cursor:pointer; padding-left:13px; padding-top:5px; padding-bottom: 5px;"
+                                    onclick="click_Browser(3)"><img width="25" height="25" src="image/daum.png"/>&nbsp&nbsp&nbspDaum
+                                </li>
+                                <li style="margin:0px;" role="separator" class="divider"></li>
+                                <li id="b_bing"
+                                    style="cursor:pointer; padding-left:13px; padding-top:5px; padding-bottom: 1px;"
+                                    onclick="click_Browser(4)"><img width="25" height="25" src="image/bing.ico"/>&nbsp&nbsp&nbspBing
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+                <td style="width:35%">
+                    <div style="float: right; margin-right:5px; margin-top:5px;">
+                        <nav class="center">
+                        </nav>
+                        <nav class="right">
+                            <div class="dropdown">
+                                <button id="dropdownMenu1" class="btn btn-default dropdown-toggle" type="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right" class="dropdown-menu"
+                                    aria-labelledby="dropdownMenu1">
+                                    <li>계정</li>
+                                    <li onclick="to_Editor()" style="cursor:pointer;">편집 모드</li>
+                                    <li>배경화면 변경</li>
+                                    <li>버그 알리기</li>
+                                    <li onclick="log_out()">로그아웃</li>
+                                    <li role="separator" class="divider"></li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </nav>
+</header>
+<div id="dialog-form" title="이메일 등록" style="display:none;">
+    <div style="width:100%; display:table">
+        <div style="display:table-cell; text-align: center" class="radio">
+            <input type="radio" name="optradio" value="1">구글
+        </div>
+        <div style="display:table-cell; text-align: center" class="radio">
+            <input type="radio" name="optradio" value="2">네이버
+        </div>
+    </div>
+    <br>
+
+    <div class="form-group">
+        <label for="email_id">ID</label>
+        <input id="email_id" name="email_id_n" type="text" class="form-control" placeholder="only ID, not @email.com">
+    </div>
+    <div class="form-group">
+        <label for="email_password">PASSWORD</label>
+        <input id="email_password" name="email_password_b" type="password" class="form-control"
+               placeholder="Insert Password">
+    </div>
+</div>
+</body>
+</html>

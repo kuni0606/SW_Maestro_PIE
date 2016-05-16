@@ -1,0 +1,1790 @@
+package db;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import model.BookMarkInfo;
+import model.EmailInfo;
+import model.NoteInfo;
+import model.PictureInfo;
+import model.ScheduleInfo;
+import model.WidgetInfo;
+
+public class WidgetInfoDAO extends BaseDAO{
+	public int insertWidgetInfo(int userCode, String widgetId, int widgetType, int xPos, int yPos, int xSize, int ySize){
+		int randomNum = -1;
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="INSERT INTO widget_tb VALUES(?,?,?,?,?,?,?,?)";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(2,userCode);
+			ps.setString(3,widgetId);
+			ps.setInt(4,widgetType);
+			ps.setInt(5,xPos);
+			ps.setInt(6,yPos);
+			ps.setInt(7,xSize);
+			ps.setInt(8,ySize);
+			
+			while(true){
+				randomNum = (int)(Math.random() * 100000000);
+				if(this.selectWidgetCodeByWidgetCode(randomNum) == -1){
+					//System.out.println(randomNum);
+					break;
+				}
+			}
+			
+			ps.setInt(1, randomNum);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int insertPictureInfo(int userCode, String picturePath){
+		int randomNum = -1;
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="INSERT INTO picture_tb VALUES(?,?,?,?)";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,userCode);
+			ps.setString(3,pictureName);
+			ps.setInt(4,1);
+			
+			while(true){
+				randomNum = (int)(Math.random() * 100000000);
+				if(this.selectPictureCodeByPictureCode(randomNum) == -1){
+					//System.out.println(randomNum);
+					break;
+				}
+			}
+			
+			ps.setInt(2, randomNum);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int insertLastSearchBar(int userCode, int lastSearchBar){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="INSERT INTO search_bar_tb VALUES(?,?)";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,userCode);
+			ps.setInt(2,lastSearchBar);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int insertBookmark(int userCode, String title, String url){
+		int insertRowCnt = 0;
+		int randomNum = -1;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="INSERT INTO bookmark_tb VALUES(?,?,?,?)";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,userCode);
+			ps.setString(3,title);
+			ps.setString(4,url);
+			
+			while(true){
+				randomNum = (int)(Math.random() * 100000000);
+				if(this.selectPictureCodeByPictureCode(randomNum) == -1){
+					//System.out.println(randomNum);
+					break;
+				}
+			}
+			
+			ps.setInt(2, randomNum);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return randomNum;
+	}
+	
+	public int insertEmailInfo(int userCode, int emailType, String emailId, String emailPw){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="INSERT INTO email_tb VALUES(?,?,?,?)";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,userCode);
+			ps.setInt(2,emailType);
+			ps.setString(3, emailId);
+			ps.setString(4, emailPw);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	
+	
+	public int insertNews(int widgetCode, String category){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="INSERT INTO news_tb VALUES(?,?)";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,widgetCode);
+			ps.setString(2,category);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int insertWebpage(int widgetCode, String url){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="INSERT INTO webpage_tb VALUES(?,?)";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,widgetCode);
+			ps.setString(2,url);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int insertNote(int widgetCode, String title, String content){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="INSERT INTO note_tb VALUES(?,?,?)";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,widgetCode);
+			ps.setString(2,title);
+			ps.setString(3,content);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int insertSchedule(int userCode, String date, String title, int flag){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="INSERT INTO schedule_tb VALUES(?,?,?,?,?)";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,userCode);
+			ps.setString(3,date);
+			ps.setString(4,title);
+			ps.setInt(5,flag);
+			
+			int randomNum = -1;
+			
+			while(true){
+				randomNum = (int)(Math.random() * 100000000);
+				if(this.selectWidgetCodeByWidgetCode(randomNum) == -1){
+					//System.out.println(randomNum);
+					break;
+				}
+			}
+			
+			ps.setInt(2, randomNum);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int updateNews(int widgetCode, String category){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="UPDATE news_tb SET news_category=? WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setString(1,category);
+			ps.setInt(2,widgetCode);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int updateWebpage(int widgetCode, String url){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="UPDATE webpage_tb SET webpage_url=? WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setString(1,url);
+			ps.setInt(2,widgetCode);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int updateNote(int widgetCode, String title, String content){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="UPDATE note_tb SET note_title=?, note_content=? WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setString(1,title);
+			ps.setString(2,content);
+			ps.setInt(3,widgetCode);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int updateLastSearchBar(int userCode, int lastSearchBar){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="UPDATE search_bar_tb SET current_search_service=? WHERE user_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,lastSearchBar);
+			ps.setInt(2,userCode);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int updateWidgetInfo(WidgetInfo widget){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="UPDATE widget_tb SET widget_x_pos=?, widget_y_pos=?, widget_x_size=?, widget_y_size=? WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1,widget.getWidgetXPos());
+			ps.setInt(2,widget.getWidgetYPos());
+			ps.setInt(3,widget.getWidgetXSize());
+			ps.setInt(4,widget.getWidgetYSize());
+			ps.setInt(5,widget.getWidgetCode());
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int updateEmailInfo(int userCode, int emailType, String emailId, String emailPw){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="UPDATE email_tb SET email_id=?, email_password=? WHERE user_code=? AND email_type=?";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setString(1, emailId);
+			ps.setString(2, emailPw);
+			ps.setInt(3,userCode);
+			ps.setInt(4,emailType);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int updatePictureInfoToNoSelect(int userCode){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="UPDATE picture_tb SET picture_flag=? WHERE user_code=? AND picture_flag=?";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1, 1);
+			ps.setInt(2, userCode);
+			ps.setInt(3, 2);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	public int updatePictureInfoToSelect(int userCode, int pictureCode){
+		int insertRowCnt = 0;
+		
+		PreparedStatement ps=null;
+		try
+		{
+			String sql="UPDATE picture_tb SET picture_flag=? WHERE user_code=? AND picture_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1, 2);
+			ps.setInt(2, userCode);
+			ps.setInt(3, pictureCode);
+			
+			insertRowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return insertRowCnt;
+	}
+	
+	
+	public int selectWidgetCodeByWidgetCode(int widgetCode){
+		int tempWidgetCode = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM widget_tb WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, widgetCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				tempWidgetCode = rs.getInt("widget_code");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return tempWidgetCode;
+	}
+	
+	public int selectPictureCodeByPictureCode(int pictureCode){
+		int tempPictureCode = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM picture_tb WHERE picture_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, pictureCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				tempPictureCode = rs.getInt("picture_code");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return tempPictureCode;
+	}
+	
+	public int selectNewsWidgetCodeByWidgetCode(int widgetCode){
+		int tempWidgetCode = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM news_tb WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, widgetCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				tempWidgetCode = rs.getInt("widget_code");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return tempWidgetCode;
+	}
+	
+	public int selectWebpageWidgetCodeByWidgetCode(int widgetCode){
+		int tempWidgetCode = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM webpage_tb WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, widgetCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				tempWidgetCode = rs.getInt("widget_code");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return tempWidgetCode;
+	}
+	
+	public int selectNoteWidgetCodeByWidgetCode(int widgetCode){
+		int tempWidgetCode = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM note_tb WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, widgetCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				tempWidgetCode = rs.getInt("widget_code");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return tempWidgetCode;
+	}
+	
+	public int selectBookmarkCodeByBookmarkCode(int bookmarkCode){
+		int tempBookmarkCode = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM bookmark_tb WHERE bookmark_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, bookmarkCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				tempBookmarkCode = rs.getInt("bookmark_code");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return tempBookmarkCode;
+	}
+	
+	
+	public int selectScheduleCodeByScheduleCode(int scheduleCode){
+		int tempWidgetCode = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM schedule_tb WHERE schedule_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, scheduleCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				tempWidgetCode = rs.getInt("schedule_code");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return tempWidgetCode;
+	}
+	
+	public PictureInfo selectPictureInfoByPictureCode(int pictureCode){
+		PictureInfo pictureInfo = null;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM picture_tb WHERE picture_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, pictureCode);
+			ResultSet rs=ps.executeQuery();
+			
+			while(rs.next()){
+				pictureInfo = new PictureInfo(rs.getInt("picture_code"), rs.getString("picture_name"), rs.getInt("picture_flag"));
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return pictureInfo;
+	}
+	
+	public ArrayList<PictureInfo> selectPictureInfoByUserCode(int userCode){
+		ArrayList<PictureInfo> pictureList = new ArrayList<PictureInfo>();
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM picture_tb WHERE user_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ResultSet rs=ps.executeQuery();
+			
+			while(rs.next()){
+				pictureList.add(new PictureInfo(rs.getInt("picture_code"), rs.getString("picture_path")));
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return pictureList;
+	}
+	
+	public ArrayList<BookMarkInfo> selectBookMarkInfoByUserCode(int userCode){
+		ArrayList<BookMarkInfo> bookmarkList = new ArrayList<BookMarkInfo>();
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM bookmark_tb WHERE user_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ResultSet rs=ps.executeQuery();
+			
+			while(rs.next()){
+				bookmarkList.add(new BookMarkInfo(rs.getInt("bookmark_code"), rs.getString("bookmark_title"), rs.getString("bookmark_content")));
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return bookmarkList;
+	}
+	
+	public ArrayList<ScheduleInfo> selectScheduleInfoByUserCode(int userCode){
+		ArrayList<ScheduleInfo> scheduleList = new ArrayList<ScheduleInfo>();
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM schedule_tb WHERE user_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ResultSet rs=ps.executeQuery();
+			
+			ScheduleInfo temp = null;
+			String date = "";
+			String title = "";
+			int flag = -1;
+			
+			while(rs.next()){
+				date = rs.getString("schedule_date");
+				title = rs.getString("schedule_title");
+				flag = rs.getInt("schedule_flag");
+				
+				if( flag == 1 ){
+					temp = new ScheduleInfo(date, title, true);
+				}
+				else{
+					temp = new ScheduleInfo(date, title, false);
+				}
+				
+				scheduleList.add(temp);
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return scheduleList;
+	}
+	
+	public EmailInfo selectEmailInfoByUserCodeEmailType(int userCode, int emailType){
+		EmailInfo emailInfo = null;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM email_tb WHERE user_code=? AND email_type=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ps.setInt(2, emailType);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				emailInfo = new EmailInfo(rs.getInt("email_type"), rs.getString("email_id"), rs.getString("email_password"));
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return emailInfo;
+	}
+	
+	public String selectNewsInfoByWidgetCode(int widgetCode){
+		String category = null;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM news_tb WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, widgetCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				category = rs.getString("new_category");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return category;
+	}
+	
+	public String selectWebpageInfoByWidgetCode(int widgetCode){
+		String url = null;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM webpage_tb WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, widgetCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				url = rs.getString("webpage_url");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return url;
+	}
+	
+	public NoteInfo selectNoteInfoByWidgetCode(int widgetCode){
+		NoteInfo noteInfo = null;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM note_tb WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, widgetCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				noteInfo = new NoteInfo(rs.getString("note_title"), rs.getString("note_content"));
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return noteInfo;
+	}
+	
+	public ArrayList<EmailInfo> selectEmailInfoByUserCode(int userCode){
+		ArrayList<EmailInfo> emailInfoList = new ArrayList<EmailInfo>();
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM email_tb WHERE user_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				EmailInfo emailInfo = new EmailInfo(rs.getInt("email_type"), rs.getString("email_id"), rs.getString("email_password"));
+				emailInfoList.add(emailInfo);
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return emailInfoList;
+	}
+	
+	public WidgetInfo selectWidgetInfoByWidgetCode(int widgetCode){
+		WidgetInfo temp = null;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM widget_tb WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, widgetCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				String widgetId = rs.getString("widget_id");
+				int widgetType = rs.getInt("widget_type");
+				int widgetXPos = rs.getInt("widget_x_pos");
+				int widgetYPos = rs.getInt("widget_y_pos");
+				int widgetXSize = rs.getInt("widget_x_size");
+				int widgetYSize = rs.getInt("widget_y_size");
+				
+				temp = new WidgetInfo(widgetCode, widgetId, widgetType, widgetXPos, widgetYPos, widgetXSize, widgetYSize);
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return temp;
+	}
+	
+	public ArrayList<WidgetInfo> selectWidgetInfoByUserCode(int userCode){
+		ArrayList<WidgetInfo> widgetList = null;
+		PreparedStatement ps=null;
+	
+		widgetList = new ArrayList<WidgetInfo>();
+		
+		try
+		{
+			String sql="SELECT * FROM widget_tb WHERE user_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				//tempWidgetCode = rs.getInt("widget_id");
+				WidgetInfo tempWidgetInfo = new WidgetInfo(rs.getInt("widget_code"), rs.getString("widget_id"), rs.getInt("widget_type"), rs.getInt("widget_x_pos"), rs.getInt("widget_y_pos"), rs.getInt("widget_x_size"), rs.getInt("widget_y_size"));	
+				widgetList.add(tempWidgetInfo);
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return widgetList;
+	}
+	
+	public int selectLastSearchBarByUserCode(int userCode){
+		int lastSearchBar = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="SELECT * FROM search_bar_tb WHERE user_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				lastSearchBar = rs.getInt("current_search_service");
+			}
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return lastSearchBar;
+	}
+	
+	public int deleteWidgetInfoByUserCode(int userCode){
+		int lowCnt = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="DELETE FROM widget_tb WHERE user_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			
+			lowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return lowCnt;
+	}
+	
+	public int deleteScheduleInfoByUserCodeScheduleDate(int userCode, String scheduleDate){
+		int lowCnt = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="DELETE FROM schedule_tb WHERE user_code=? AND schedule_date=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ps.setString(2, scheduleDate);
+			
+			lowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return lowCnt;
+	}
+	
+	public int deleteEmailInfoByUserCodeEmailType(int userCode, int emailType){
+		int lowCnt = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="DELETE FROM email_tb WHERE user_code=? AND email_type=?";
+			ps=super.getConn().prepareStatement(sql);
+			
+			ps.setInt(1, userCode);
+			ps.setInt(2, emailType);
+			
+			lowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return lowCnt;
+	}
+	
+	public int deleteWidgetInfoByWidgetCode(int widgetCode){
+		int lowCnt = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="DELETE FROM widget_tb WHERE widget_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, widgetCode);
+			
+			lowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return lowCnt;
+	}
+	
+	public int deletePictureInfoByUserCodePictureName(int userCode, String pictureName){
+		int lowCnt = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="DELETE FROM picture_tb WHERE user_code=? AND picture_name=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ps.setString(2, pictureName);
+			
+			lowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return lowCnt;
+	}
+	
+	public int deleteBookmarkByUserCodeBookmarkCode(int userCode, int bookmarkCode){
+		int lowCnt = -1;
+		PreparedStatement ps=null;
+		
+		try
+		{
+			String sql="DELETE FROM bookmark_tb WHERE user_code=? AND bookmark_code=?";
+			ps=super.getConn().prepareStatement(sql);
+			ps.setInt(1, userCode);
+			ps.setInt(2, bookmarkCode);
+			
+			lowCnt = ps.executeUpdate();
+		}
+		catch (SQLException se)
+		{
+			System.out.println(se.getMessage());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			if(ps!=null)
+			{
+				try
+				{
+					ps.close();
+				}
+				catch (SQLException se)
+				{
+					System.out.println(se.getMessage());
+				}
+			}
+		}
+		
+		return lowCnt;
+	}
+}

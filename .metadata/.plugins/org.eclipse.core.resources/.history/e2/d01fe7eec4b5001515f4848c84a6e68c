@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <!--jQuery-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <!--to do list-->
+    <link rel="stylesheet" href='todos.css'/><!--
+    <!--FullCalendar-->
+    <!-- <link href='fullcalendar.css' rel='stylesheet' />
+    <link href='fullcalendar.print.css' rel='stylesheet' media='print' />
+    <script src='moment.min.js'></script>
+    <script src='fullcalendar.min.js'></script> -->
+    <script>
+        var date_todo_list = {};
+        var toggleStatus;
+        var EnterKey = 13;
+        var date;
+
+        /*FullCalendar에서 날짜 클릭 후*/
+       /* function AfterClick(_date) {
+            date = _date;
+
+        }*/
+        $(function(){
+            date = $.datepicker.formatDate('yy-mm-dd', new Date());
+            $("#todayDate").text(date);
+            date_todo_list[date] = [];
+        });
+
+        $.fn.isBound = function(type, fn) {
+            var data = this.data('events')[type];
+
+            if (data === undefined || data.length === 0) {
+                return false;
+            }
+
+            return (-1 !== $.inArray(fn, data));
+        };
+
+        $(document).ready(function() {
+            function runBind() {
+                $('.destroy').on('click', function(e) {
+                    var labelText = $(this).closest('li').find('label').text();
+                    $currentListItem = $(this).closest('li');
+                    $currentListItem.remove();
+
+                    date_todo_list[date] = date_todo_list[date].filter(function (el) {
+                        return el.task !== labelText;
+                    });
+                });
+
+                $('.toggle').on('click', function(e) {
+                    var $currentListItemLabel = $(this).closest('li').find('label');
+                    var labelText = $(this).closest('li').find('label').text(); // to do list의 text를 가져옴
+                    /*var targetData = date_todo_list[date].filter(function(v) {
+                     return v[labelText];
+                     });
+                     var target = targetData[0];*/
+                    /*
+                     * Do this or add css and remove JS dynamic css.
+                     */
+                    if ( $currentListItemLabel.attr('data') == 'done' ) {
+                        $currentListItemLabel.attr('data', '');
+                        $currentListItemLabel.css('text-decoration', 'none');
+
+                        for(var i = 0; i < date_todo_list[date].length; i++) {
+
+                            if(date_todo_list[date][i].task == labelText) {
+                                date_todo_list[date][i].check = true;
+                            }
+                        }
+                    }
+                    else {
+                        $currentListItemLabel.attr('data', 'done');
+                        $currentListItemLabel.css('text-decoration', 'line-through');
+
+                        for(var i = 0; i < date_todo_list[date].length; i++) {
+                            if(date_todo_list[date][i].task == labelText) {
+                                date_todo_list[date][i].check = false;
+                            }
+                        }
+                    }
+
+                });
+            }
+
+            $todoList = $('#todo-list');
+            $('#new-todo').keypress(function(e) {
+                var newTodoVal = $('#new-todo').val();
+                var temp_list = {};
+                var check_var = true;
+
+                for(var i = 0; i < date_todo_list[date].length; i++) {
+                    if(date_todo_list[date][i].task == newTodoVal) {
+                        check_var = false;
+                    }
+                }
+
+                if (e.which === EnterKey) {
+                    //이미 존재하는 리스트인지 판단 후, 목록화
+                    if(check_var == false) {
+                        alert("이미 존재하는 리스트입니다");
+                    }else {
+                        var todos = $todoList.html();
+                        todos += ""+
+                                "<li>" +
+                                "<div class='view'>" +
+                                "<input class='toggle' type='checkbox'>" +
+                                "<label data=''>" + newTodoVal + "</label>" +
+                                "<a class='destroy'></a>" +
+                                "</div>" +
+                                "</li>";
+
+                        $(this).val('');
+                        $todoList.html(todos);
+                        runBind();
+                        $('#main').show();
+
+                        temp_list["task"] = newTodoVal;
+                        temp_list["check"] = true;
+
+                        date_todo_list[date].push(temp_list);
+                        temp_list = {};
+                    }
+                }}); // end if
+        });
+
+        $(function(){
+            $("#todoapp").focusout(function(){
+                alert(JSON.stringify(date_todo_list));
+                $.post("http://210.118.74.117:8100/PIE/update_schedule", {
+                    schedule_list: JSON.stringify(date_todo_list)
+                }, function (result) {
+                });
+                //여기서 디비로 date_todo_list 넘겨주면되고
+                //delete버튼 눌렀을 경우도 넘겨주면된다
+            })
+        });
+    </script>
+
+    <script>
+        function movePage() {
+           // location.href = "./CalendarUtil/FullCalendar.html";
+        }/*
+         $("#dialog_trigger").click( function() {
+         $("#calendar").load("./CalendarUtil/FullCalendar.html", function() {
+         $("#calendar").dialog("open");
+         });
+         })*/
+    </script>
+    <script>
+        /*FullCalendar*/
+        $(document).ready(function() {
+
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: null
+                },
+                selectable: true,
+                selectHelper: true,
+                select: function(start, end) {
+                    AfterClick(start.format());
+                    this.close();
+                    /*var title = prompt('할일 등록:');
+                    var eventData;
+                    if (title) {
+                        eventData = {
+                            title: title,
+                            start: start,
+                            end: end
+                        };
+                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                    }
+                    $('#calendar').fullCalendar('unselect');*/
+                },
+                //editable: true, //task drag and drop 허용
+                eventLimit: true, // allow "more" link when too many events
+                events: [
+                    {
+                        title: "소희",
+                        start: "2016-01-03"
+                    }
+                ]
+                /*events: [
+                    {
+                        title: 'All Day Event',
+                        start: '2015-12-01'
+                    },
+                    {
+                        title: 'Long Event',
+                        start: '2015-12-07',
+                        end: '2015-12-10'
+                    },
+                    {
+                        id: 999,
+                        title: 'Repeating Event',
+                        start: '2015-12-09T16:00:00'
+                    },
+                    {
+                        id: 999,
+                        title: 'Repeating Event',
+                        start: '2015-12-16T16:00:00'
+                    },
+                    {
+                        title: 'Conference',
+                        start: '2015-12-11',
+                        end: '2015-12-13'
+                    },
+                    {
+                        title: 'Meeting',
+                        start: '2015-12-12T10:30:00',
+                        end: '2015-12-12T12:30:00'
+                    },
+                    {
+                        title: 'Lunch',
+                        start: '2015-12-12T12:00:00'
+                    },
+                    {
+                        title: 'Meeting',
+                        start: '2015-12-12T14:30:00'
+                    },
+                    {
+                        title: 'Happy Hour',
+                        start: '2015-12-12T17:30:00'
+                    },
+                    {
+                        title: 'Dinner',
+                        start: '2015-12-12T20:00:00'
+                    },
+                    {
+                        title: 'Birthday Party',
+                        start: '2015-12-13T07:00:00'
+                    },
+                    {
+                        title: 'Click for Google',
+                        url: 'http://google.com/',
+                        start: '2015-12-28'
+                    }
+                ]*/
+            });
+
+        });
+
+    </script>
+    <script>
+        /*다이얼로그를 위한 스크립트*/
+        $(function() {
+            var dialog;//, form;
+
+
+            dialog = $( "#dialog-form" ).dialog({
+                autoOpen: false,
+               // height: 300,
+                width: 1000,
+                modal: true,
+                buttons: {
+                    /*"Create an account": addUser,
+                    Cancel: function() {
+                        dialog.dialog( "close" );
+                    }*/
+                },
+                /*close: function() {
+                    /!*form[ 0 ].reset();
+                    allFields.removeClass( "ui-state-error" );*!/
+                }*/
+            });
+/*
+            form = dialog.find( "form" ).on( "submit", function( event ) {
+                event.preventDefault();
+                addUser();
+            });*/
+
+            $( "#dialog_trigger" ).button().on( "click", function() {
+                dialog.dialog( "open" );
+            });
+        });
+    </script>
+    <style>
+        /*FullCalendar style*/
+        body {
+            margin: 40px 10px;
+            padding: 0;
+            font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+            font-size: 14px;
+        }
+
+        #calendar {
+
+            /*max-height: 900px;*/
+            margin: 0 auto;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="todoapp" style="margin-top:150px;">
+        <header>
+            <img id="dialog_trigger" src="calendar_img.png"  style="float: right; margin-top:-7px; margin-right:40px" width="30px", height="30px"/> <!--onclick="movePage()"-->
+            <h1 id="todayDate"></h1>
+            <input id="new-todo" type="text" placeholder="What needs to be done?">
+        </header>
+        <section id='main'>
+            <ul id='todo-list'>
+            </ul>
+        </section>
+        <footer> <a id="clear-completed">Clear completed</a>
+            <div id='todo-count'></div>
+        </footer>
+    </div>
+
+    <div id="dialog-form" title="Calendar">
+        <div id='calendar'></div>
+    </div>
+</body>
+</html>
